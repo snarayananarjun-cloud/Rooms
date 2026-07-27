@@ -166,52 +166,6 @@
   }
   .success-state p { font-size: 14px; line-height: 1.5; margin: 0; opacity: 0.85; }
 
-  .footer-note {
-    text-align: center;
-    margin-top: 22px;
-    font-size: 11px;
-    opacity: 0.6;
-  }
-  .footer-note a { color: var(--maroon); cursor: pointer; text-decoration: underline; }
-
-  .summary-panel {
-    display: none;
-    margin-top: 16px;
-    background: var(--card);
-    border-radius: 14px;
-    padding: 18px 20px;
-    box-shadow: 0 10px 26px rgba(111,28,55,0.14);
-  }
-  .summary-panel h4 {
-    font-family: 'Cormorant Garamond', serif;
-    color: var(--maroon);
-    font-size: 20px;
-    margin: 0 0 10px;
-  }
-  .summary-stats { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
-  .stat {
-    flex: 1;
-    min-width: 90px;
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-  }
-  .stat .num { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--pink); font-weight: 700; }
-  .stat .lbl { font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; opacity: 0.65; }
-  .guest-row {
-    font-size: 13px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--line);
-    display: flex;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .guest-row:last-child { border-bottom: none; }
-  .guest-name { font-weight: 500; }
-  .guest-meta { opacity: 0.7; font-size: 12px; text-align: right; }
-  .summary-empty { font-size: 13px; opacity: 0.6; text-align: center; padding: 6px 0; }
 </style>
 
 <div class="rsvp-root">
@@ -282,17 +236,14 @@
       </div>
     </div>
 
-    <div class="footer-note">
-      <a id="summaryToggle">Organizer summary</a>
-    </div>
-
-    <div class="summary-panel" id="summaryPanel"></div>
-
   </div>
 </div>
 
 <script>
 (function() {
+  // Paste your Google Apps Script Web App URL here (ends in /exec)
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7tn9b6y0Iup715e8UkZPMtQ4dpKxqG7B89zlKMagxHmzDwyk9ROd2ygYiEOZfLWd3Sg/exec';
+
   const root = document.currentScript.parentElement;
 
   // Build garland decoration
@@ -341,9 +292,12 @@
     };
 
     try {
-      const key = 'rsvp:' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
-      const result = await window.storage.set(key, JSON.stringify(entry), true);
-      if (!result) throw new Error('Save returned empty result');
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(entry)
+      });
+      // Apps Script web apps don't return readable CORS responses in no-cors-like
+      // scenarios, so we treat a non-throwing fetch as success.
       root.querySelector('#formBody').style.display = 'none';
       root.querySelector('#successState').style.display = 'block';
     } catch (e) {
@@ -354,69 +308,5 @@
     }
   });
 
-  // Organizer summary
-  const summaryToggle = root.querySelector('#summaryToggle');
-  const summaryPanel = root.querySelector('#summaryPanel');
-  let loaded = false;
-
-  summaryToggle.addEventListener('click', async () => {
-    if (summaryPanel.style.display === 'block') {
-      summaryPanel.style.display = 'none';
-      return;
-    }
-    summaryPanel.style.display = 'block';
-    summaryPanel.innerHTML = '<div class="summary-empty">Loading responses\u2026</div>';
-
-    try {
-      const listResult = await window.storage.list('rsvp:', true);
-      const keys = (listResult && listResult.keys) || [];
-
-      if (keys.length === 0) {
-        summaryPanel.innerHTML = '<h4>RSVP Summary</h4><div class="summary-empty">No responses yet.</div>';
-        return;
-      }
-
-      const entries = [];
-      for (const k of keys) {
-        try {
-          const r = await window.storage.get(k, true);
-          if (r && r.value) entries.push(JSON.parse(r.value));
-        } catch (err) { /* skip unreadable entry */ }
-      }
-
-      let totalAdults = 0, totalChildren = 0, roomsNeeded = 0;
-      entries.forEach(e => {
-        totalAdults += Number(e.adults) || 0;
-        totalChildren += Number(e.children) || 0;
-        if (e.room === 'Yes') roomsNeeded += 1;
-      });
-
-      const statsHtml =
-        '<div class="summary-stats">' +
-          '<div class="stat"><div class="num">' + entries.length + '</div><div class="lbl">Responses</div></div>' +
-          '<div class="stat"><div class="num">' + totalAdults + '</div><div class="lbl">Adults</div></div>' +
-          '<div class="stat"><div class="num">' + totalChildren + '</div><div class="lbl">Children</div></div>' +
-          '<div class="stat"><div class="num">' + roomsNeeded + '</div><div class="lbl">Rooms needed</div></div>' +
-        '</div>';
-
-      const rowsHtml = entries
-        .sort((a, b) => new Date(a.submittedAt) - new Date(b.submittedAt))
-        .map(e =>
-          '<div class="guest-row"><div class="guest-name">' + escapeHtml(e.name) + '</div>' +
-          '<div class="guest-meta">' + e.adults + ' adult(s), ' + e.children + ' child(ren) &middot; room: ' + e.room + '<br/>' + escapeHtml(e.arrival) + '</div></div>'
-        ).join('');
-
-      summaryPanel.innerHTML = '<h4>RSVP Summary</h4>' + statsHtml + rowsHtml;
-    } catch (e) {
-      summaryPanel.innerHTML = '<h4>RSVP Summary</h4><div class="summary-empty">Could not load responses right now.</div>';
-    }
-    loaded = true;
-  });
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str == null ? '' : String(str);
-    return div.innerHTML;
-  }
 })();
 </script>
