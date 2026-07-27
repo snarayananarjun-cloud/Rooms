@@ -1,7 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Arjun & Sanjana — RSVP</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Jost:wght@400;500;600&display=swap');
 
-  .rsvp-root {
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  body {
     --bg-top: #f6a49b;
     --bg-bottom: #fbd9a3;
     --card: #fffaf2;
@@ -13,13 +22,11 @@
     font-family: 'Jost', sans-serif;
     color: var(--ink);
     background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
-    min-height: 100%;
+    min-height: 100vh;
     padding: 32px 16px 48px;
     display: flex;
     justify-content: center;
-    box-sizing: border-box;
   }
-  .rsvp-root *, .rsvp-root *::before, .rsvp-root *::after { box-sizing: border-box; }
 
   .rsvp-wrap { width: 100%; max-width: 460px; }
 
@@ -69,6 +76,7 @@
     color: var(--ink);
     opacity: 0.85;
     margin-bottom: 18px;
+    line-height: 1.6;
   }
   .subline strong { color: var(--pink); }
 
@@ -77,6 +85,64 @@
     content: ''; flex: 1; height: 1px; background: var(--line);
   }
   .divider-mark { color: var(--pink); font-size: 13px; opacity: 0.8; }
+
+  /* Guest-facing schedule explainer */
+  .schedule-card {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 20px 20px 18px;
+    box-shadow: 0 10px 26px rgba(111,28,55,0.14);
+    margin-bottom: 20px;
+  }
+  .schedule-card h4 {
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--maroon);
+    font-size: 19px;
+    margin: 0 0 4px;
+    text-align: center;
+  }
+  .schedule-card .schedule-sub {
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.65;
+    margin-bottom: 14px;
+  }
+  .schedule-day { margin-bottom: 12px; }
+  .schedule-day:last-child { margin-bottom: 0; }
+  .schedule-day-label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--pink);
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .schedule-item {
+    font-size: 13.5px;
+    line-height: 1.55;
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 3px;
+  }
+  .schedule-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+  .schedule-item b { color: var(--ink); }
+  .schedule-note {
+    margin-top: 12px;
+    font-size: 12px;
+    opacity: 0.7;
+    line-height: 1.5;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
 
   .card {
     background: var(--card);
@@ -102,20 +168,22 @@
   .field textarea {
     width: 100%;
     font-family: 'Jost', sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     padding: 10px 12px;
     border: 1px solid var(--line);
     border-radius: 8px;
     background: #fff;
     color: var(--ink);
     outline: none;
+    -webkit-appearance: none;
+    appearance: none;
   }
   .field input:focus, .field select:focus, .field textarea:focus {
     border-color: var(--pink);
     box-shadow: 0 0 0 3px rgba(189,56,102,0.15);
   }
   .row2 { display: flex; gap: 12px; }
-  .row2 .field { flex: 1; }
+  .row2 .field { flex: 1; min-width: 0; }
 
   .radio-group { display: flex; gap: 10px; }
   .radio-pill {
@@ -135,11 +203,11 @@
     color: #fff;
   }
 
-  .hint { font-size: 11.5px; color: var(--ink); opacity: 0.55; margin-top: 4px; }
+  .hint { font-size: 11.5px; color: var(--ink); opacity: 0.55; margin-top: 4px; line-height: 1.4; }
 
   .submit-btn {
     width: 100%;
-    padding: 13px;
+    padding: 14px;
     margin-top: 6px;
     background: var(--maroon);
     color: #fff8ee;
@@ -150,6 +218,7 @@
     letter-spacing: 0.04em;
     cursor: pointer;
     transition: background 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
   }
   .submit-btn:hover { background: var(--pink); }
   .submit-btn:disabled { opacity: 0.6; cursor: default; }
@@ -166,18 +235,50 @@
   }
   .success-state p { font-size: 14px; line-height: 1.5; margin: 0; opacity: 0.85; }
 
+  /* Mobile refinements */
+  @media (max-width: 420px) {
+    body { padding: 22px 12px 36px; }
+    .title { font-size: 32px; }
+    .title .amp { font-size: 20px; }
+    .subline { font-size: 12px; }
+    .card, .schedule-card { padding: 18px 16px 16px; border-radius: 12px; }
+    .row2 { flex-direction: column; gap: 0; }
+    .garland-flower { width: 9px; height: 9px; }
+    .garland-leaf { border-bottom-width: 11px; }
+  }
 </style>
-
-<div class="rsvp-root">
+</head>
+<body>
   <div class="rsvp-wrap">
 
     <div class="garland" id="garlandTop"></div>
     <div class="om">&#3462;</div>
     <div class="eyebrow">With the blessings of our parents and elders</div>
     <div class="title">Arjun <span class="amp">&amp;</span> Sanjana</div>
-    <div class="subline">Muhurtham &mdash; <strong>Sunday, 1st Nov 2026</strong>, 7:30&ndash;9:15 AM<br/>VPS Grand Mahal, Aruljothi Street, Adivaram, Palani</div>
+    <div class="subline">Wedding ceremony &mdash; <strong>Sunday, 1st Nov 2026</strong>, 7:30&ndash;9:15 AM<br/>VPS Grand Mahal, Aruljothi Street, Adivaram, Palani</div>
 
     <div class="divider"><span class="divider-mark">&#10047;</span></div>
+
+    <div class="schedule-card">
+      <h4>What to expect</h4>
+      <div class="schedule-sub">A simple guide to the two days</div>
+
+      <div class="schedule-day">
+        <div class="schedule-day-label">Saturday, 31st October</div>
+        <div class="schedule-item"><b>7:30–11:30 AM</b> &mdash; Morning prayer rituals (Viratham)</div>
+        <div class="schedule-item"><b>4:30 PM</b> &mdash; Formal engagement ceremony (Nichayathartham)</div>
+        <div class="schedule-item"><b>7:00 PM</b> &mdash; Sangeet, an evening of music and celebration</div>
+      </div>
+
+      <div class="schedule-day">
+        <div class="schedule-day-label">Sunday, 1st November</div>
+        <div class="schedule-item"><b>7:30–9:15 AM</b> &mdash; The wedding ceremony itself (Muhurtham)</div>
+      </div>
+
+      <div class="schedule-note">
+        If you're joining for the full celebration, plan to arrive on the morning of 31st October and stay overnight at the venue. If you're only able to join for the wedding ceremony, arriving on 1st November morning is fine and won't need an overnight stay.
+      </div>
+    </div>
 
     <div class="card" id="formCard">
       <div id="formBody">
@@ -206,12 +307,13 @@
         </div>
 
         <div class="field">
-          <label for="fArrival">Arrival</label>
+          <label for="fArrival">When will you arrive?</label>
           <select id="fArrival">
             <option value="">Select&hellip;</option>
-            <option value="31st Oct evening">31st Oct evening (festivities begin)</option>
-            <option value="1st Nov morning">1st Nov morning (muhurtham only)</option>
+            <option value="31st Oct morning (staying overnight)">31st Oct morning &mdash; staying overnight</option>
+            <option value="1st Nov morning (no overnight stay)">1st Nov morning only &mdash; no overnight stay</option>
           </select>
+          <div class="hint">Choose 31st Oct if you're joining the full celebration, or 1st Nov if you're only attending the wedding ceremony.</div>
         </div>
 
         <div class="field">
@@ -237,14 +339,13 @@
     </div>
 
   </div>
-</div>
 
 <script>
 (function() {
   // Paste your Google Apps Script Web App URL here (ends in /exec)
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7tn9b6y0Iup715e8UkZPMtQ4dpKxqG7B89zlKMagxHmzDwyk9ROd2ygYiEOZfLWd3Sg/exec';
 
-  const root = document.currentScript.parentElement;
+  const root = document.body;
 
   // Build garland decoration
   const garlandTop = root.querySelector('#garlandTop');
@@ -296,8 +397,6 @@
         method: 'POST',
         body: JSON.stringify(entry)
       });
-      // Apps Script web apps don't return readable CORS responses in no-cors-like
-      // scenarios, so we treat a non-throwing fetch as success.
       root.querySelector('#formBody').style.display = 'none';
       root.querySelector('#successState').style.display = 'block';
     } catch (e) {
@@ -310,3 +409,5 @@
 
 })();
 </script>
+</body>
+</html>
