@@ -46,7 +46,8 @@
     box-shadow: 0 0 0 2px rgba(255,255,255,0.35) inset;
   }
 
-  .om { text-align: center; color: var(--pink); font-size: 26px; margin: 6px 0 10px; }
+  .om-svg { display: flex; justify-content: center; margin: 6px 0 10px; }
+  .om-svg svg { width: 70px; height: auto; }
 
   .eyebrow {
     text-align: center;
@@ -270,7 +271,18 @@
   <div class="rsvp-wrap">
 
     <div class="garland" id="garlandTop"></div>
-    <div class="om">&#3462;</div>
+    <div class="om-svg" aria-hidden="true">
+      <svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg">
+        <g fill="none" stroke="#bd3866" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 40c0-10 8-18 18-18s16 8 16 15-6 12-13 12-11-5-11-10 5-9 10-9 8 4 8 8"/>
+          <path d="M55 12v20"/>
+          <path d="M45 20c3-6 9-9 14-9s10 4 10 9-4 9-9 9c-3 0-5-2-5-4"/>
+          <path d="M78 15c5 0 8 3 8 7s-4 7-8 7"/>
+          <path d="M82 8c2 3 2 6 0 9"/>
+        </g>
+      </svg>
+    </div>
+
     <div class="eyebrow">With the blessings of our parents and elders</div>
     <div class="title">Arjun <span class="amp">&amp;</span> Sanjana</div>
     <div class="subline">Wedding ceremony &mdash; <strong>Sunday, 1st Nov 2026</strong>, 7:30&ndash;9:15 AM<br/>VPS Grand Mahal, Aruljothi Street, Adivaram, Palani</div>
