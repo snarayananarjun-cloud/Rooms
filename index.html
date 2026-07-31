@@ -386,18 +386,12 @@
           <label for="fArrival" class="i18n" data-ta="எப்போ வருவீங்க?">When will you arrive?</label>
           <select id="fArrival">
             <option value="">Select&hellip;</option>
-            <option value="Before 31st Oct (arriving early)" class="i18n" data-ta="அக்டோபர் 31-க்கு முன்னாடியே வருவேன்">Arriving before 31st Oct</option>
-            <option value="31st Oct morning (staying overnight)" class="i18n" data-ta="அக்டோபர் 31 காலை &mdash; இரவு தங்குறது">31st Oct morning &mdash; staying overnight</option>
+            <option value="31st Oct (staying overnight)" class="i18n" data-ta="அக்டோபர் 31 &mdash; இரவு தங்குறது">31st Oct &mdash; staying overnight</option>
             <option value="1st Nov morning (no overnight stay)" class="i18n" data-ta="நவம்பர் 1 காலை மட்டும் &mdash; தங்க மாட்டோம்">1st Nov morning only &mdash; no overnight stay</option>
           </select>
-          <div class="hint i18n" data-ta="முழு விழாவுக்கு வந்தா அக்டோபர் 31 தேர்ந்தெடுங்க, கல்யாணத்துக்கு மட்டும் வந்தா நவம்பர் 1 தேர்ந்தெடுங்க.">Choose 31st Oct if you're joining the full celebration, or 1st Nov if you're only attending the wedding ceremony.</div>
+          <div class="hint i18n" data-ta="முழு விழாவுக்கு வந்தா அக்டோபர் 31 தேர்ந்தெடுங்க, கல்யாணத்துக்கு மட்டும் வந்தா நவம்பர் 1 தேர்ந்தெடுங்க. அறை மதியத்துக்கு பிறகுதான் தயாராகும்.">Choose 31st Oct if you're joining the full celebration, or 1st Nov if you're only attending the wedding ceremony. Rooms will be ready from the afternoon onward.</div>
         </div>
 
-        <div class="field" id="earlyArrivalField" style="display:none;">
-          <label for="fEarlyDate" class="i18n" data-ta="எந்த தேதி வருவீங்க?">Which date are you planning to arrive?</label>
-          <input type="text" id="fEarlyDate" placeholder="e.g. 30th Oct evening" />
-          <div class="hint i18n" data-ta="இது தெரிஞ்சா, உங்களுக்காக முன்னாடியே அறை ஏற்பாடு செய்ய உதவும்.">This helps us arrange your room a bit earlier too.</div>
-        </div>
 
         <div class="field">
           <label for="fElderly" class="i18n" data-ta="பெரியவங்களுக்கு ஏதாவது கவனிப்பு தேவைப்பட்டா சொல்லுங்க (தேவைன்னா மட்டும்)">Let us know if any elders with you need extra care or comfort (totally optional)</label>
@@ -482,12 +476,6 @@
     });
   });
 
-  const arrivalSelect = root.querySelector('#fArrival');
-  const earlyArrivalField = root.querySelector('#earlyArrivalField');
-  arrivalSelect.addEventListener('change', () => {
-    earlyArrivalField.style.display = arrivalSelect.value === 'Before 31st Oct (arriving early)' ? 'block' : 'none';
-  });
-
   const errorText = root.querySelector('#errorText');
   const submitBtn = root.querySelector('#submitBtn');
 
@@ -496,7 +484,6 @@
     const adults = root.querySelector('#fAdults').value.trim();
     const children = root.querySelector('#fChildren').value.trim() || '0';
     const arrival = root.querySelector('#fArrival').value;
-    const earlyDate = root.querySelector('#fEarlyDate').value.trim();
     const elderly = root.querySelector('#fElderly').value.trim();
     const contact = root.querySelector('#fContact').value.trim();
 
@@ -511,7 +498,7 @@
 
     const entry = {
       name, adults: Number(adults), children: Number(children),
-      room: selectedRoom, arrival, earlyDate, elderly, contact,
+      room: selectedRoom, arrival, elderly, contact,
       submittedAt: new Date().toISOString()
     };
 
